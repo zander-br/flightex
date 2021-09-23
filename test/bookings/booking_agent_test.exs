@@ -61,4 +61,26 @@ defmodule Flightex.Bookings.AgentTest do
       assert response == expected_response
     end
   end
+
+  describe "list_all/0" do
+    test "list all bookings" do
+      BookingsAgent.start_link(%{})
+
+      :booking
+      |> build()
+      |> BookingsAgent.save()
+
+      :booking
+      |> build()
+      |> BookingsAgent.save()
+
+      expected_response = "elixir"
+
+      response =
+        BookingsAgent.list_all()
+        |> Map.values()
+
+      assert response == expected_response
+    end
+  end
 end

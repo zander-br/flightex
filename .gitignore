@@ -27,3 +27,5 @@ flightex-*.tar
 /tmp
 
 results.json
+
+report.csv
