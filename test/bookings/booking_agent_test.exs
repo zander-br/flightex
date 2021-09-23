@@ -4,6 +4,7 @@ defmodule Flightex.Bookings.AgentTest do
   import Flightex.Factory
 
   alias Flightex.Bookings.Agent, as: BookingsAgent
+  alias Flightex.Bookings.Booking
 
   describe "save/1" do
     setup do
@@ -63,18 +64,37 @@ defmodule Flightex.Bookings.AgentTest do
   end
 
   describe "list_all/0" do
-    test "list all bookings" do
+    setup do
       BookingsAgent.start_link(%{})
 
+      {:ok, id: UUID.uuid4(), another_id: UUID.uuid4()}
+    end
+
+    test "list all bookings", %{id: id, another_id: another_id} do
       :booking
-      |> build()
+      |> build(id: id, local_destination: "Salvador", local_origin: "São Paulo")
       |> BookingsAgent.save()
 
       :booking
-      |> build()
+      |> build(id: another_id, local_destination: "Rio de Janeiro", local_origin: "Cuiabá")
       |> BookingsAgent.save()
 
-      expected_response = "elixir"
+      expected_response = [
+        %Booking{
+          complete_date: ~N[2001-05-07 03:05:00],
+          id: id,
+          local_destination: "Salvador",
+          local_origin: "São Paulo",
+          user_id: "12345678900"
+        },
+        %Booking{
+          complete_date: ~N[2001-05-07 03:05:00],
+          id: another_id,
+          local_destination: "Rio de Janeiro",
+          local_origin: "Cuiabá",
+          user_id: "12345678900"
+        }
+      ]
 
       response =
         BookingsAgent.list_all()
