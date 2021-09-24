@@ -72,11 +72,11 @@ defmodule Flightex.Bookings.AgentTest do
 
     test "list all bookings", %{id: id, another_id: another_id} do
       :booking
-      |> build(id: id, local_destination: "Salvador", local_origin: "São Paulo")
+      |> build(id: id, local_destination: "Salvador", local_origin: "Cuiabá")
       |> BookingsAgent.save()
 
       :booking
-      |> build(id: another_id, local_destination: "Rio de Janeiro", local_origin: "Cuiabá")
+      |> build(id: another_id, local_destination: "Rio de Janeiro", local_origin: "São Paulo")
       |> BookingsAgent.save()
 
       expected_response = [
@@ -84,14 +84,14 @@ defmodule Flightex.Bookings.AgentTest do
           complete_date: ~N[2001-05-07 03:05:00],
           id: id,
           local_destination: "Salvador",
-          local_origin: "São Paulo",
+          local_origin: "Cuiabá",
           user_id: "12345678900"
         },
         %Booking{
           complete_date: ~N[2001-05-07 03:05:00],
           id: another_id,
           local_destination: "Rio de Janeiro",
-          local_origin: "Cuiabá",
+          local_origin: "São Paulo",
           user_id: "12345678900"
         }
       ]
@@ -99,6 +99,7 @@ defmodule Flightex.Bookings.AgentTest do
       response =
         BookingsAgent.list_all()
         |> Map.values()
+        |> Enum.sort_by(&Map.fetch(&1, :local_origin))
 
       assert response == expected_response
     end
