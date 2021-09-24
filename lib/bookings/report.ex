@@ -2,16 +2,28 @@ defmodule Flightex.Bookings.Report do
   alias Flightex.Bookings.Agent, as: BookingAgent
   alias Flightex.Bookings.Booking
 
-  def create(from_date, to_date) do
+  def generate(from_date, to_date) do
     booking_list = build_bookings(from_date, to_date)
 
     File.write("report.csv", booking_list)
+  end
+
+  def generate(filename \\ "report.csv") do
+    booking_list = build_bookings()
+
+    File.write(filename, booking_list)
   end
 
   defp build_bookings(from_date, to_date) do
     BookingAgent.list_all()
     |> Map.values()
     |> Enum.filter(&do_dates_are_in_the_range?(&1, from_date, to_date))
+    |> Enum.map(&booking_string/1)
+  end
+
+  defp build_bookings() do
+    BookingAgent.list_all()
+    |> Map.values()
     |> Enum.map(&booking_string/1)
   end
 
