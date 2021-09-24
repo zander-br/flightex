@@ -28,8 +28,9 @@ defmodule Flightex.Bookings.Report do
   end
 
   defp do_dates_are_in_the_range?(%Booking{complete_date: complete_date}, from_date, to_date) do
-    NaiveDateTime.compare(complete_date, from_date) != :lt and
-      NaiveDateTime.compare(complete_date, to_date) != :gt
+    from_date
+    |> Date.range(to_date)
+    |> Enum.member?(complete_date)
   end
 
   defp booking_string(%Booking{
